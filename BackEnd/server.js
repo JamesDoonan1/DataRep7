@@ -14,6 +14,7 @@ next();
 });
 
 // getting-started.js
+// Connect to MongoDB using Mongoose
 const mongoose = require('mongoose');
 
 main().catch(err => console.log(err));
@@ -24,15 +25,17 @@ async function main() {
   // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
 
-//constructor - make a promise below
+// Define a schema for the 'books' collection
 const bookSchema = new mongoose.Schema({
   title:String,
   cover:String,
   author:String
 })
 
+// Create a model based on the schema
 const bookModel = mongoose.model('books', bookSchema);
 
+// Use bodyParser to parse incoming request bodies
 const bodyParser = require("body-parser");
 
 //Here we are configuring express to use body-parser as middle-ware.
@@ -42,6 +45,7 @@ app.use(bodyParser.json());
 
 app.post('/api/book', (req,res)=>{
     console.log(req.body);
+    // Create a new book using the data from the request body
     bookModel.create({
       title:req.body.title,
       cover:req.body.cover,
@@ -64,15 +68,18 @@ app.get('/api/book', async (req, res)=>{
 
 })
 
+// Define a GET route to retrieve a specific book by ID
 app.get("/api/book/:id", async (req,res)=>{
   //pull parameter from id
   console.log(req.params.id);
 
-  //
+  // Retrieve a book based on the provided ID parameter
   let book = await bookModel.findById({_id:req.params.id})
   res.send(book);
 })
 
+
+// Start the Express app and listen on the specified port
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
